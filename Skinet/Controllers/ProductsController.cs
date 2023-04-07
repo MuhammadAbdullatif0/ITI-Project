@@ -10,21 +10,34 @@ namespace Skinet.Controllers;
 [ApiController]
 public class ProductsController : ControllerBase
 {
-    private readonly StoreContext context;
+    private readonly IProductRepo product;
 
-    public ProductsController(StoreContext context)
+    public ProductsController(IProductRepo product)
     {
-        this.context = context;
+        this.product = product;
     }
     [HttpGet]
-    public  async Task<ActionResult<List<Product>>> GetProduct()
+    public async Task<ActionResult<IReadOnlyList<Product>>> GetProduct()
     {
-        return await context.products.ToListAsync();
+        var prod = await product.GetAsync();
+        return Ok(prod);
     }
     [HttpGet("{id}")]
     public async Task<ActionResult<Product>> GetProduct(int id)
     {
-        return await context.products.FindAsync(id);
-        
+        var oneProduct = await product.GetByIdAsync(id);
+        return Ok(oneProduct);
+
+    }
+
+    [HttpGet("brands")]
+    public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrand()
+    {
+        return Ok(await product.GetBrandAsync());
+    }
+    [HttpGet("types")]
+    public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductType()
+    {
+        return Ok(await product.GetTypeAsync());
     }
 }
