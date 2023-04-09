@@ -1,4 +1,6 @@
-﻿using Core;
+﻿using API;
+using AutoMapper;
+using Core;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,34 +12,48 @@ namespace Skinet.Controllers;
 [ApiController]
 public class ProductsController : ControllerBase
 {
-    private readonly IProductRepo product;
+    private readonly IGenericRepo<Product> products;
+    private readonly IGenericRepo<ProductBrand> brand;
+    private readonly IGenericRepo<ProductType> type;
+    private readonly IMapper mapper;
 
-    public ProductsController(IProductRepo product)
+    public ProductsController(
+        IGenericRepo<Product> products,
+        IGenericRepo<ProductBrand> brand,
+        IGenericRepo<ProductType> type,
+        IMapper mapper
+        )
     {
-        this.product = product;
+        this.products = products;
+        this.brand = brand;
+        this.type = type;
+        this.mapper = mapper;
     }
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<Product>>> GetProduct()
+    public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProduct()
     {
-        var prod = await product.GetAsync();
-        return Ok(prod);
+        var spec = new ProductsWithType_BrandSpecification();
+        var prod = await products.ListAsync(spec);
+        return  Ok(mapper.Map<IReadOnlyList<Product>, IReadOnlyList< ProductToReturnDto>>(prod));
     }
     [HttpGet("{id}")]
-    public async Task<ActionResult<Product>> GetProduct(int id)
+    public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
     {
-        var oneProduct = await product.GetByIdAsync(id);
-        return Ok(oneProduct);
+        var spec = new ProductsWithType_BrandSpecification(id);
+        var oneProduct = await products.GetEntityWithSpecification(spec);
+
+        return mapper.Map<Product ,ProductToReturnDto>(oneProduct);
 
     }
 
     [HttpGet("brands")]
     public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrand()
     {
-        return Ok(await product.GetBrandAsync());
+        return Ok(await brand.GetAsync());
     }
     [HttpGet("types")]
     public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductType()
     {
-        return Ok(await product.GetTypeAsync());
+        return Ok(await type.GetAsync());
     }
 }

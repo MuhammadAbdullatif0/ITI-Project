@@ -10,6 +10,8 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        #region Connection
+
         var connection = builder.Configuration.GetConnectionString("DefultConnection");
         builder.Services.AddDbContext<StoreContext>(opt =>
         {
@@ -17,16 +19,23 @@ public class Program
         });
 
         builder.Services.AddScoped<IProductRepo, ProductRepo>();
-        // Add services to the container.
+        builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
+        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+        #endregion
+
+        // Add services to the container.
+        #region Services
         builder.Services.AddControllers();
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        #endregion
+
 
         var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
+        #region Middleware
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -34,7 +43,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
-
+        app.UseStaticFiles();
         app.UseAuthorization();
 
         app.MapControllers();
@@ -48,10 +57,13 @@ public class Program
             await context.Database.MigrateAsync();
             await StoreContextSeed.SeedAsync(context);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             logger.LogError(ex, "an error occured during migration");
         }
+        #endregion
+        // Configure the HTTP request pipeline.
+
         app.Run();
     }
 }
