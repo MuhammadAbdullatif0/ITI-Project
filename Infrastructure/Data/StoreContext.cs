@@ -13,7 +13,8 @@ public class StoreContext:DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        // to apply all the entity type configurations that are defined in the current executing assembly. 
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly()); 
     }
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductBrand> Brands { get; set; }

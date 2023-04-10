@@ -1,16 +1,13 @@
 ﻿using API;
+using API.Controllers;
 using AutoMapper;
 using Core;
-using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Net.Security;
 
 namespace Skinet.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ProductsController : ControllerBase
+
+public class ProductsController : BaseApiController
 {
     private readonly IGenericRepo<Product> products;
     private readonly IGenericRepo<ProductBrand> brand;
@@ -37,10 +34,14 @@ public class ProductsController : ControllerBase
         return  Ok(mapper.Map<IReadOnlyList<Product>, IReadOnlyList< ProductToReturnDto>>(prod));
     }
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
     {
         var spec = new ProductsWithType_BrandSpecification(id);
         var oneProduct = await products.GetEntityWithSpecification(spec);
+        if (oneProduct == null)
+            return NotFound(new ApiResponse(404));
 
         return mapper.Map<Product ,ProductToReturnDto>(oneProduct);
 

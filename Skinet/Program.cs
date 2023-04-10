@@ -1,5 +1,8 @@
+using API;
+using API.Middleware;
 using Core;
 using Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Skinet;
@@ -10,44 +13,24 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        #region Connection
 
-        var connection = builder.Configuration.GetConnectionString("DefultConnection");
-        builder.Services.AddDbContext<StoreContext>(opt =>
-        {
-            opt.UseSqlite(connection);
-        });
-
-        builder.Services.AddScoped<IProductRepo, ProductRepo>();
-        builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
-        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-        #endregion
-
-        // Add services to the container.
-        #region Services
-        builder.Services.AddControllers();
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-        #endregion
-
+        builder.Services.AddAppServices(builder.Configuration);
 
         var app = builder.Build();
         #region Middleware
-        if (app.Environment.IsDevelopment())
-        {
+        app.UseMiddleware<ExceptionMiddleware>();
+        app.UseStatusCodePagesWithRedirects("/error/{0}");
+       
             app.UseSwagger();
             app.UseSwaggerUI();
-        }
-
+        
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseAuthorization();
 
         app.MapControllers();
 
+        // apply any change to DB
         using var scope = app.Services.CreateScope();
         var service = scope.ServiceProvider;
         var context = service.GetRequiredService<StoreContext>();
