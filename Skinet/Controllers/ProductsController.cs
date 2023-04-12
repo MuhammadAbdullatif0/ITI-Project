@@ -2,6 +2,7 @@
 using API.Controllers;
 using AutoMapper;
 using Core;
+using Core.Specifiction;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Skinet.Controllers;
@@ -27,12 +28,16 @@ public class ProductsController : BaseApiController
         this.mapper = mapper;
     }
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProduct()
+    public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts([FromQuery]ProductSpecParam productParam)
     {
-        var spec = new ProductsWithType_BrandSpecification();
+        var spec = new ProductsWithType_BrandSpecification(productParam);
+        var count = new ProductWithFiltersForCountForCountSpecifications(productParam);
+        var totalItem = await products.CountAsync(count);
         var prod = await products.ListAsync(spec);
-        return  Ok(mapper.Map<IReadOnlyList<Product>, IReadOnlyList< ProductToReturnDto>>(prod));
+        var data = mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(prod);
+        return  Ok(new Pagination<ProductToReturnDto>(productParam.PageIndex , productParam.PageSize , totalItem , data));
     }
+
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
@@ -52,6 +57,7 @@ public class ProductsController : BaseApiController
     {
         return Ok(await brand.GetAsync());
     }
+
     [HttpGet("types")]
     public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductType()
     {

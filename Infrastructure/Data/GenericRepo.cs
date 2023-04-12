@@ -11,6 +11,12 @@ public class GenericRepo<T> : IGenericRepo<T> where T : BaseEntity
     {
         this.context = context;
     }
+
+    public async Task<int> CountAsync(ISpecification<T> specification)
+    {
+        return await ApplySpecification(specification).CountAsync();
+    }
+
     public async Task<IReadOnlyList<T>> GetAsync()
     {
         return await context.Set<T>().ToListAsync();

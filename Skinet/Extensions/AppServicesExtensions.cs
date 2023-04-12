@@ -47,6 +47,13 @@ public static class AppServicesExtensions
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         #endregion
+        services.AddCors(p =>
+        {
+            p.AddPolicy("CorsPolicy", policy =>
+            {
+                policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("https://localhost:4200");
+            });
+        });
         return services;
     }
 }

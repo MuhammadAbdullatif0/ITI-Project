@@ -26,6 +26,7 @@ public class Program
         
         app.UseHttpsRedirection();
         app.UseStaticFiles();
+        app.UseCors("CorsPolicy");
         app.UseAuthorization();
 
         app.MapControllers();
