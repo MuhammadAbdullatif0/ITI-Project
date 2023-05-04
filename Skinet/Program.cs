@@ -1,8 +1,6 @@
 using API;
 using API.Middleware;
-using Core;
 using Infrastructure;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Skinet;
