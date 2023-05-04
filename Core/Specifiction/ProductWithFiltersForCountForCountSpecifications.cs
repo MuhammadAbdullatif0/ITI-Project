@@ -8,7 +8,7 @@
         (!param.BrandId.HasValue || x.ProductBrandId == param.BrandId) && 
         (!param.TypeId.HasValue || x.ProductTypeId == param.TypeId))
         {
-
+        
         }
     }
 }
