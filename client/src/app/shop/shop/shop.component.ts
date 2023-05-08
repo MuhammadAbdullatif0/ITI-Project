@@ -47,7 +47,7 @@ export class ShopComponent implements OnInit {
   getBrands() {
     this.shopProducts.getBrands().subscribe((res) => {
       this.brands = [{ id: 0, name: 'All' }, ...res];
-      console.log(this.brands);
+      
     });
   }
   getTypes() {
