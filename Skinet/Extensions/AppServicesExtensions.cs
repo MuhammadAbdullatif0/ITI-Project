@@ -1,7 +1,10 @@
 ﻿using Core;
+using Core.Interfaces;
 using Infrastructure;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 namespace API;
 
@@ -16,7 +19,12 @@ public static class AppServicesExtensions
         {
             opt.UseSqlite(connection);
         });
-
+        services.AddSingleton<IConnectionMultiplexer>(c =>
+        {
+            var options = ConfigurationOptions.Parse(config.GetConnectionString("Redis"));
+            return ConnectionMultiplexer.Connect(options);
+        });
+        services.AddScoped<IBasketRepo, BasketRepo>();
         services.AddScoped<IProductRepo, ProductRepo>();
         services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
