@@ -13,7 +13,7 @@ public class AppIdentityDBContextSeed
             {
                 DisplayName = "Muhammad",
                 Email = "Muhammad@mo.com",
-                UserName = "Muhammad Abdullatif",
+                UserName = "MuhammadAbdullatif",
                 Address = new Address
                 {
                     FirstName = "Muhammad",
