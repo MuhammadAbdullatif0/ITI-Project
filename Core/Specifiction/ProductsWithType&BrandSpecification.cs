@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace Core;
+﻿namespace Core;
 
 public class ProductsWithType_BrandSpecification:BaseSpecification<Product>
 {

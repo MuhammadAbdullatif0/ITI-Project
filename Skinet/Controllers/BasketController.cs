@@ -1,4 +1,6 @@
-﻿using Core.Entities;
+﻿using API.Dtos;
+using AutoMapper;
+using Core.Entities;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,31 +8,36 @@ namespace API.Controllers;
 
 public class BasketController : BaseApiController
 {
-    private readonly IBasketRepo basket;
-
-    public BasketController(IBasketRepo basket)
+    private readonly IBasketRepo _basketRepository;
+    private readonly IMapper _mapper;
+    public BasketController(IBasketRepo basketRepository, IMapper mapper)
     {
-        this.basket = basket;
+        _mapper = mapper;
+        _basketRepository = basketRepository;
     }
 
     [HttpGet]
     public async Task<ActionResult<CustomerBasket>> GetBasketById(string id)
     {
-        var basketVar = await basket.GetBaskeAsync(id);
-        return Ok(basketVar ?? new CustomerBasket(id));
+        var basket = await _basketRepository.GetBaskeAsync(id);
 
+        return Ok(basket ?? new CustomerBasket(id));
     }
 
     [HttpPost]
-    public async Task<ActionResult<CustomerBasket>> UpdateBasket(CustomerBasket Upbasket)
+    public async Task<ActionResult<CustomerBasket>> UpdateBasket(CustomerBasketDto basket)
     {
-        var updatedBasket = await basket.UpdateBaskeAsync(Upbasket);
+        var customerBasket = _mapper.Map<CustomerBasket>(basket);
+
+        var updatedBasket = await _basketRepository.UpdateBaskeAsync(customerBasket);
+
         return Ok(updatedBasket);
     }
+
     [HttpDelete]
     public async Task DeleteBasketAsync(string id)
     {
-        await basket.DeleteBasketAsync(id);
+        await _basketRepository.DeleteBasketAsync(id);
     }
 
 }

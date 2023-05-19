@@ -1,4 +1,5 @@
 using API;
+using API.Extensions;
 using API.Middleware;
 using Core.Entities;
 using Infrastructure;
@@ -16,14 +17,14 @@ public class Program
 
         builder.Services.AddAppServices(builder.Configuration);
         builder.Services.AddIdentityServices(builder.Configuration);
+        builder.Services.AddSwaggerDocumentation();
 
         var app = builder.Build();
         #region Middleware
         app.UseMiddleware<ExceptionMiddleware>();
         app.UseStatusCodePagesWithRedirects("/error/{0}");
-       
-            app.UseSwagger();
-            app.UseSwaggerUI();
+
+        app.UseSwaggerDocumentation();
         
         app.UseHttpsRedirection();
         app.UseStaticFiles();
