@@ -12,9 +12,19 @@ public class GenericRepo<T> : IGenericRepo<T> where T : BaseEntity
         this.context = context;
     }
 
+    public void Add(T entity)
+    {
+        context.Set<T>().Add(entity);
+    }
+
     public async Task<int> CountAsync(ISpecification<T> specification)
     {
         return await ApplySpecification(specification).CountAsync();
+    }
+
+    public void Delete(T entity)
+    {
+        context.Set<T>().Remove(entity);
     }
 
     public async Task<IReadOnlyList<T>> GetAsync()
@@ -35,6 +45,12 @@ public class GenericRepo<T> : IGenericRepo<T> where T : BaseEntity
     public  async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> specification)
     {
         return await ApplySpecification(specification).ToListAsync();
+    }
+
+    public void Update(T entity)
+    {
+        context.Set<T>().Attach(entity);
+        context.Entry(entity).State = EntityState.Modified;
     }
 
     private IQueryable<T> ApplySpecification(ISpecification<T> specification)

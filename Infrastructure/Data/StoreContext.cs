@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Entities.OrderAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Reflection;
@@ -7,29 +8,33 @@ namespace Infrastructure;
 
 public class StoreContext:DbContext
 {
-    public StoreContext(DbContextOptions<StoreContext> options):base(options)
+    public StoreContext(DbContextOptions<StoreContext> options) : base(options)
     {
-        
     }
+
+    public DbSet<Product> Products { get; set; }
+    public DbSet<ProductBrand> Brands { get; set; }
+    public DbSet<ProductType> Types { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        // to apply all the entity type configurations that are defined in the current executing assembly. 
-        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly()); 
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-        if(Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+        if (Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
         {
-            foreach(var item in modelBuilder.Model.GetEntityTypes())
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                var prop = item.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
-                foreach (var property in prop)
+                var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
+
+                foreach (var property in properties)
                 {
-                    modelBuilder.Entity(item.Name).Property(property.Name).HasConversion<double>();
+                    modelBuilder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
                 }
             }
         }
     }
-    public DbSet<Product> Products { get; set; }
-    public DbSet<ProductBrand> Brands { get; set; }
-    public DbSet<ProductType> Types { get; set; }
 }

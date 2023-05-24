@@ -13,9 +13,9 @@ public class ProductUrlResolver : IValueResolver<Product, ProductToReturnDto, st
     }
     public string Resolve(Product source, ProductToReturnDto destination, string destMember, ResolutionContext context)
     {
-        if(!string.IsNullOrEmpty(source.PictureUrl))
+        if(!string.IsNullOrEmpty(source.imgUrl))
         {
-            return configuration["ApiUrl"] + source.PictureUrl;
+            return configuration["ApiUrl"] + source.imgUrl;
         }
         return null;
     }

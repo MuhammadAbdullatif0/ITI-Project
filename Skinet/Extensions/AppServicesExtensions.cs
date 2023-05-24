@@ -2,6 +2,7 @@
 using Core.Interfaces;
 using Infrastructure;
 using Infrastructure.Data;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
@@ -24,7 +25,9 @@ public static class AppServicesExtensions
             var options = ConfigurationOptions.Parse(config.GetConnectionString("Redis"));
             return ConnectionMultiplexer.Connect(options);
         });
+        services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IBasketRepo, BasketRepo>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IProductRepo, ProductRepo>();
         services.AddScoped<ITokenService, TokenSevice>();
         services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));

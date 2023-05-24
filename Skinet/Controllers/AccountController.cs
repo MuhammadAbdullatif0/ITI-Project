@@ -29,6 +29,7 @@ public class AccountController : BaseApiController
     [HttpGet]
     public async Task<ActionResult<UserDto>> GetCurrentUser()
     {
+
         var user = await userManager.FindByEmailFromClaimsPrincipal(User);
 
 
