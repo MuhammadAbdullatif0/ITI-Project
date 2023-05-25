@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { map, of, ReplaySubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Address, User } from '../shared/Models/user';
+import { BasketService } from '../basket/basket.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,7 @@ export class AccountService {
   private currentUserSource = new ReplaySubject<User | null>(1);
   currentUser$ = this.currentUserSource.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router , private basket: BasketService) {}
 
   loadCurrentUser(token: string | null) {
     if (token == null) {
@@ -61,6 +62,7 @@ export class AccountService {
     localStorage.removeItem('token');
     this.currentUserSource.next(null);
     this.router.navigateByUrl('/');
+    this.basket.deleteLocalBasket();
   }
 
   checkEmailExists(email: string) {

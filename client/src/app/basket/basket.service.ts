@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { Basket, BasketItem, BasketTotals } from '../shared/Models/basket';
 import { HttpClient } from '@angular/common/http';
 import { IProduct } from '../shared/Models/products';
+import { DeliveryMethod } from '../shared/Models/DeliveryMethod';
 
 @Injectable({
   providedIn: 'root',
@@ -30,14 +31,14 @@ export class BasketService {
       );
   }
 
-  // setShippingPrice(deliveryMethod: DeliveryMethod) {
-  //   const basket = this.getCurrentBasketValue();
-  //   if (basket) {
-  //     basket.shippingPrice = deliveryMethod.price;
-  //     basket.deliveryMethodId = deliveryMethod.id;
-  //     this.setBasket(basket);
-  //   }
-  // }
+  setShippingPrice(deliveryMethod: DeliveryMethod) {
+    const basket = this.getCurrentBasketValue();
+    if (basket) {
+      basket.shippingPrice = deliveryMethod.price;
+      basket.deliveryMethodId = deliveryMethod.id;
+      this.setBasket(basket);
+    }
+  }
 
   getBasket(id: string) {
     return this.http.get<Basket>(this.baseUrl + 'basket?id=' + id).subscribe({
