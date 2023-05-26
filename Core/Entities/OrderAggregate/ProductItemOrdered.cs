@@ -10,7 +10,7 @@ namespace Core.Entities.OrderAggregate
         {
             ProductItemId = productItemId;
             ProductName = productName;
-            imgUrl = imgUrl;
+            this.imgUrl = imgUrl;
         }
 
         public int ProductItemId { get; set; }

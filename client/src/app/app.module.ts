@@ -10,9 +10,10 @@ import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { OrderDetailedComponent } from './order-detailed/order-detailed.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, OrderDetailedComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

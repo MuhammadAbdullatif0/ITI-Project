@@ -22,7 +22,7 @@ export interface Order {
 export interface OrderItem {
   productId: number;
   productName: string;
-  pictureUrl: string;
+  imgUrl: string;
   price: number;
   quantity: number;
 }
