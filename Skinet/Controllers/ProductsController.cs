@@ -1,5 +1,6 @@
 ﻿using API;
 using API.Controllers;
+using API.Dtos;
 using AutoMapper;
 using Core;
 using Core.Specifiction;
@@ -50,6 +51,85 @@ public class ProductsController : BaseApiController
 
         return mapper.Map<Product ,ProductToReturnDto>(oneProduct);
 
+    }
+    [HttpPatch("{id}")]
+    public async Task<ActionResult> updateProduct(int id, [FromForm] API.Dtos.ProductToUpdate product)
+    {
+        var FoundProduct = await products.GetByIdAsync(id);
+
+        FoundProduct.Description = product.Description;
+        FoundProduct.Name = product.Name;
+        FoundProduct.Price = product.Price;
+        FoundProduct.ProductBrandId = product.ProductBrand;
+        FoundProduct.ProductTypeId = product.ProductType;
+
+        if (product.ImgUrl is not null)
+        {
+            var extension = Path.GetExtension(product.ImgUrl.FileName);
+
+            var newName = $"{DateTime.Now.Ticks}{extension}";
+
+            var ourDirectory = Path.Join(Directory.GetCurrentDirectory(), "wwwroot", "images", "products", newName);
+
+            using (var stream = new System.IO.FileStream(ourDirectory, FileMode.Create))
+            {
+                product.ImgUrl.CopyTo(stream);
+            }
+            FoundProduct.imgUrl = "images/products/" + newName;
+
+        }
+
+
+
+        products.Update(FoundProduct);
+
+
+
+        return Ok();
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> AddProduct([FromForm] ProductToUpdate product)
+    {
+        var FoundProduct = new Product();
+
+        FoundProduct.Description = product.Description;
+        FoundProduct.Name = product.Name;
+        FoundProduct.Price = product.Price;
+        FoundProduct.ProductBrandId = product.ProductBrand;
+        FoundProduct.ProductTypeId = product.ProductType;
+
+        if (product.ImgUrl is not null)
+        {
+            var extension = Path.GetExtension(product.ImgUrl.FileName);
+
+            var newName = $"{DateTime.Now.Ticks}{extension}";
+
+            var ourDirectory = Path.Join(Directory.GetCurrentDirectory(), "wwwroot", "images", "products", newName);
+
+            using (var stream = new System.IO.FileStream(ourDirectory, FileMode.Create))
+            {
+                product.ImgUrl.CopyTo(stream);
+            }
+            FoundProduct.imgUrl = "images/products/" + newName;
+
+        }
+
+
+
+        products.Add(FoundProduct);
+
+
+
+        return Ok();
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult> DeleteProduct(int id)
+    {
+        var FoundProduct = await products.GetByIdAsync(id);
+        products.Delete(FoundProduct);
+        return Ok();
     }
 
     [HttpGet("brands")]
