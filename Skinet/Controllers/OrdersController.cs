@@ -42,6 +42,13 @@ namespace API.Controllers
 
             return Ok(_mapper.Map<IReadOnlyList<OrderToReturnDto>>(orders));
         }
+        [HttpGet("all")]
+        public async Task<ActionResult<IReadOnlyList<OrderToReturnDto>>> GetAllOrders()
+        {
+            var orders = await _orderService.GetAll();
+
+            return Ok(_mapper.Map<IReadOnlyList<OrderToReturnDto>>(orders));
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderToReturnDto>> GetOrderByIdForUser(int id)

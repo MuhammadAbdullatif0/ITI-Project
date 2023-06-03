@@ -15,6 +15,12 @@ namespace Core.Specifiction
             AddInclude(o => o.DeliveryMethod);
             ADDOrderByDesc(o => o.OrderDate);
         }
+        public OrdersWithItemsAndOrderingSpecification() : base(o => (true))
+        {
+            AddInclude(o => o.OrderItems);
+            AddInclude(o => o.DeliveryMethod);
+            ADDOrderByDesc(o => o.OrderDate);
+        }
 
         public OrdersWithItemsAndOrderingSpecification(int id, string email)
             : base(o => o.Id == id && o.BuyerEmail == email)

@@ -15,7 +15,6 @@ public class GenericRepo<T> : IGenericRepo<T> where T : BaseEntity
     public void Add(T entity)
     {
         context.Set<T>().Add(entity);
-        context.SaveChanges();
 
     }
 
@@ -27,7 +26,6 @@ public class GenericRepo<T> : IGenericRepo<T> where T : BaseEntity
     public void Delete(T entity)
     {
         context.Set<T>().Remove(entity);
-        context.SaveChanges();
 
     }
 
@@ -55,7 +53,7 @@ public class GenericRepo<T> : IGenericRepo<T> where T : BaseEntity
     {
         context.Set<T>().Attach(entity);
         context.Entry(entity).State = EntityState.Modified;
-        context.SaveChanges();
+
     }
 
     private IQueryable<T> ApplySpecification(ISpecification<T> specification)
